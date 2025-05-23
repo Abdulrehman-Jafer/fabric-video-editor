@@ -2,7 +2,7 @@
 import React from "react";
 import { StoreContext } from "@/store";
 import { observer } from "mobx-react";
-import { VideoResource } from "@/components/entity/VideoResource";
+import { VideoResourceV2 } from "@/components/entity/VideoResourceV2";
 
 export const VideoResourcesPanelV2 = observer(() => {
   const store = React.useContext(StoreContext);
@@ -17,7 +17,7 @@ export const VideoResourcesPanelV2 = observer(() => {
         Videos
       </div>
       {store.videos.map((video, index) => {
-        return <VideoResource key={video} video={video} index={index} />;
+        return <VideoResourceV2 key={video} video={video} index={index} />;
       })}
       <button
         onClick={getFileDirectlyFromThePublic}
