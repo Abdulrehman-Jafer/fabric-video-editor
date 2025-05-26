@@ -8,7 +8,7 @@ export const VideoResourcesPanelV2 = observer(() => {
   const store = React.useContext(StoreContext);
 
   const getFileDirectlyFromThePublic = () => {
-    store.addVideoResource("/file_example_MP4_480_1_5MG.mp4");
+    store.addVideoResource("/file_example_MP4_480_1_5MG___2.mp4");
   };
 
   return (

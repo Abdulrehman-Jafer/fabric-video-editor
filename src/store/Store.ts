@@ -107,9 +107,11 @@ export class Store {
   addVideoResource(video: string) {
     this.videos = [...this.videos, video];
   }
+
   addAudioResource(audio: string) {
     this.audios = [...this.audios, audio];
   }
+
   addImageResource(image: string) {
     this.images = [...this.images, image];
   }
@@ -118,6 +120,7 @@ export class Store {
     this.animations = [...this.animations, animation];
     this.refreshAnimations();
   }
+
   updateAnimation(id: string, animation: Animation) {
     const index = this.animations.findIndex((a) => a.id === id);
     this.animations[index] = animation;
@@ -393,6 +396,7 @@ export class Store {
       else this.canvas.discardActiveObject();
     }
   }
+
   updateSelectedElement() {
     this.selectedElement =
       this.editorElements.find(
@@ -489,6 +493,7 @@ export class Store {
       });
     }
   }
+
   updateTimeTo(newTime: number) {
     this.setCurrentTimeInMs(newTime);
     this.animationTimeLine.seek(newTime);
@@ -500,6 +505,18 @@ export class Store {
       const isInside =
         e.timeFrame.start <= newTime && newTime <= e.timeFrame.end;
       e.fabricObject.visible = isInside;
+
+      if (e.type === "video") {
+        const video = document.getElementById(e.properties.elementId);
+        if (isHtmlVideoElement(video) && !isInside) {
+          video.currentTime = 0;
+        }
+      } else if (e.type === "audio") {
+        const audio = document.getElementById(e.properties.elementId);
+        if (isHtmlAudioElement(audio) && !isInside) {
+          audio.currentTime = 0;
+        }
+      }
     });
   }
 
@@ -660,6 +677,7 @@ export class Store {
         }
       });
   }
+
   updateAudioElements() {
     this.editorElements
       .filter(

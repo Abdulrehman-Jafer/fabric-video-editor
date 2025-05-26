@@ -10,20 +10,19 @@ import { ScaleRangeInput } from "./ScaleRangeInput";
 const MARKINGS = [
   {
     interval: 5000,
-    color: 'black',
+    color: "black",
     size: 16,
-    width: 1
+    width: 1,
   },
   {
     interval: 1000,
-    color: 'black',
+    color: "black",
     size: 8,
-    width: 1
-  }
+    width: 1,
+  },
 ];
 
 export type SeekPlayerProps = {};
-
 
 export const SeekPlayer = observer((_props: SeekPlayerProps) => {
   const store = useContext(StoreContext);
