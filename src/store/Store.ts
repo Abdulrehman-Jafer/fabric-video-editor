@@ -426,9 +426,12 @@ export class Store {
     if (timeFrame.start != undefined && timeFrame.start < 0) {
       timeFrame.start = 0;
     }
+
     if (timeFrame.end != undefined && timeFrame.end > this.maxTime) {
+      this.setMaxTime(Math.max(this.maxTime, timeFrame.end));
       timeFrame.end = this.maxTime;
     }
+
     const newEditorElement = {
       ...editorElement,
       timeFrame: {
@@ -536,6 +539,8 @@ export class Store {
       return;
     }
     const videoDurationMs = videoElement.duration * 1000;
+    this.setMaxTime(Math.max(this.maxTime, videoDurationMs));
+
     const aspectRatio = videoElement.videoWidth / videoElement.videoHeight;
     const id = getUid();
     this.addEditorElement({
@@ -605,6 +610,7 @@ export class Store {
       return;
     }
     const audioDurationMs = audioElement.duration * 1000;
+    this.setMaxTime(Math.max(this.maxTime, audioDurationMs));
     const id = getUid();
     this.addEditorElement({
       id,
@@ -629,6 +635,7 @@ export class Store {
       },
     });
   }
+
   addText(options: { text: string; fontSize: number; fontWeight: number }) {
     const id = getUid();
     const index = this.editorElements.length;
