@@ -7,15 +7,21 @@ export type EditorElementBase<T extends string, P> = {
   readonly type: T;
   placement: Placement;
   timeFrame: TimeFrame;
+  crop?: Crop;
   properties: P;
 };
 export type VideoEditorElement = EditorElementBase<
   "video",
-  { src: string; elementId: string; imageObject?: fabric.Image, effect: Effect }
+  { src: string; elementId: string; imageObject?: fabric.Image; effect: Effect }
 >;
 export type ImageEditorElement = EditorElementBase<
   "image",
-  { src: string; elementId: string; imageObject?: fabric.Object, effect: Effect }
+  {
+    src: string;
+    elementId: string;
+    imageObject?: fabric.Object;
+    effect: Effect;
+  }
 >;
 
 export type AudioEditorElement = EditorElementBase<
@@ -53,15 +59,21 @@ export type TimeFrame = {
   end: number;
 };
 
+export type Crop = {
+  fromStart: number;
+  fromEnd: number;
+};
+
 export type EffectBase<T extends string> = {
   type: T;
-}
+};
 
-export type BlackAndWhiteEffect = EffectBase<"none"> | 
-EffectBase<"blackAndWhite"> | 
-EffectBase<"sepia"> | 
-EffectBase<"invert"> |
-EffectBase<"saturate"> ;
+export type BlackAndWhiteEffect =
+  | EffectBase<"none">
+  | EffectBase<"blackAndWhite">
+  | EffectBase<"sepia">
+  | EffectBase<"invert">
+  | EffectBase<"saturate">;
 export type Effect = BlackAndWhiteEffect;
 export type EffecType = Effect["type"];
 
@@ -71,29 +83,35 @@ export type AnimationBase<T, P = {}> = {
   duration: number;
   type: T;
   properties: P;
-}
+};
 
 export type FadeInAnimation = AnimationBase<"fadeIn">;
 export type FadeOutAnimation = AnimationBase<"fadeOut">;
 
-export type BreatheAnimation = AnimationBase<"breathe">
+export type BreatheAnimation = AnimationBase<"breathe">;
 
 export type SlideDirection = "left" | "right" | "top" | "bottom";
-export type SlideTextType = 'none'|'character';
-export type SlideInAnimation = AnimationBase<"slideIn", {
-  direction: SlideDirection,
-  useClipPath: boolean,
-  textType:'none'|'character'
-}>;
+export type SlideTextType = "none" | "character";
+export type SlideInAnimation = AnimationBase<
+  "slideIn",
+  {
+    direction: SlideDirection;
+    useClipPath: boolean;
+    textType: "none" | "character";
+  }
+>;
 
-export type SlideOutAnimation = AnimationBase<"slideOut", {
-  direction: SlideDirection,
-  useClipPath: boolean,
-  textType:SlideTextType,
-}>;
+export type SlideOutAnimation = AnimationBase<
+  "slideOut",
+  {
+    direction: SlideDirection;
+    useClipPath: boolean;
+    textType: SlideTextType;
+  }
+>;
 
 export type Animation =
-  FadeInAnimation
+  | FadeInAnimation
   | FadeOutAnimation
   | SlideInAnimation
   | SlideOutAnimation

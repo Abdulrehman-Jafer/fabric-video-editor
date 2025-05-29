@@ -18,6 +18,7 @@ import {
   ImageEditorElement,
   Effect,
   TextEditorElement,
+  Crop,
 } from "../types";
 import { FabricUitls } from "@/utils/fabric-utils";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
@@ -411,6 +412,26 @@ export class Store {
     // this.refreshAnimations();
   }
 
+  updateEditorElementCrop(editorElement: EditorElement, crop: Partial<Crop>) {
+    if (editorElement.type === "video") {
+      const newCrop = editorElement.crop as Crop;
+
+      if (crop.fromStart) newCrop.fromStart += crop.fromStart;
+      if (crop.fromEnd) newCrop.fromEnd += crop.fromEnd;
+
+      newCrop.fromStart = Math.max(0, newCrop.fromStart);
+      newCrop.fromEnd = Math.max(0, newCrop.fromEnd);
+
+      const newEditorElement = {
+        ...editorElement,
+        crop: newCrop,
+      };
+
+      this.updateEditorElement(newEditorElement);
+      this.updateVideoElements();
+    }
+  }
+
   updateEditorElement(editorElement: EditorElement) {
     this.setEditorElements(
       this.editorElements.map((element) =>
@@ -512,7 +533,8 @@ export class Store {
       if (e.type === "video") {
         const video = document.getElementById(e.properties.elementId);
         if (isHtmlVideoElement(video) && !isInside) {
-          video.currentTime = 0;
+          const croppedStartTimeInSeconds = e.crop?.fromStart! / 1000;
+          video.currentTime = 0 + croppedStartTimeInSeconds;
         }
       } else if (e.type === "audio") {
         const audio = document.getElementById(e.properties.elementId);
@@ -559,6 +581,10 @@ export class Store {
       timeFrame: {
         start: 0,
         end: videoDurationMs,
+      },
+      crop: {
+        fromStart: 0,
+        fromEnd: 0,
       },
       properties: {
         elementId: `video-${id}`,
@@ -673,9 +699,14 @@ export class Store {
       .forEach((element) => {
         const video = document.getElementById(element.properties.elementId);
         if (isHtmlVideoElement(video)) {
-          const videoTime =
+          const videoPositionOnTimeLineInSeconds =
             (this.currentTimeInMs - element.timeFrame.start) / 1000;
-          video.currentTime = videoTime;
+
+          const cropFromStartTimeInSeconds = element.crop?.fromStart! / 1000;
+
+          video.currentTime =
+            videoPositionOnTimeLineInSeconds + cropFromStartTimeInSeconds;
+
           if (this.playing) {
             video.play();
           } else {
@@ -842,6 +873,7 @@ export class Store {
           const videoElement = document.getElementById(
             element.properties.elementId
           );
+
           if (!isHtmlVideoElement(videoElement)) continue;
           // const filters = [];
           // if (element.properties.effect?.type === "blackAndWhite") {

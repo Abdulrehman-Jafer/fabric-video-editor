@@ -31,21 +31,7 @@ export const Element = observer((props: ElementProps) => {
         {element.name}
       </div>
       <div>
-        {element.type === "video" ? (
-          <video
-            className="opacity-0 max-w-[20px] max-h-[20px]"
-            src={element.properties.src}
-            onLoad={() => {
-              store.refreshElements();
-            }}
-            onLoadedData={() => {
-              store.refreshElements();
-            }}
-            height={20}
-            width={20}
-            id={element.properties.elementId}
-          ></video>
-        ) : null}
+        <EditorCanvasVideoElement element={element} />
         {element.type === "image" ? (
           <img
             className="opacity-0 max-w-[20px] max-h-[20px]"
@@ -89,3 +75,23 @@ export const Element = observer((props: ElementProps) => {
     </div>
   );
 });
+
+export const EditorCanvasVideoElement = ({ element }: ElementProps) => {
+  const store = React.useContext(StoreContext);
+
+  return element.type === "video" ? (
+    <video
+      className="opacity-0 max-w-[20px] max-h-[20px]"
+      src={element.properties.src}
+      onLoad={() => {
+        store.refreshElements();
+      }}
+      onLoadedData={() => {
+        store.refreshElements();
+      }}
+      height={20}
+      width={20}
+      id={element.properties.elementId}
+    ></video>
+  ) : null;
+};

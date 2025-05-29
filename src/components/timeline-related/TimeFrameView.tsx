@@ -29,6 +29,9 @@ export const TimeFrameView = observer((props: { element: EditorElement }) => {
         total={store.maxTime}
         disabled={disabled}
         onChange={(value) => {
+          store.updateEditorElementCrop(element, {
+            fromStart: value - element.timeFrame.start, // From Start New Value will be greater than Current Time Frame Start
+          });
           store.updateEditorElementTimeFrame(element, {
             start: value,
           });
@@ -38,7 +41,6 @@ export const TimeFrameView = observer((props: { element: EditorElement }) => {
           className={`bg-white border-2 border-blue-400 w-[10px] h-[10px] mt-[calc(25px/2)] translate-y-[-50%] transform translate-x-[-50%] ${disabledCursor}`}
         ></div>
       </DragableView>
-
       <DragableView
         className={disabled ? "cursor-no-drop" : "cursor-col-resize"}
         value={element.timeFrame.start}
@@ -71,6 +73,9 @@ export const TimeFrameView = observer((props: { element: EditorElement }) => {
         value={element.timeFrame.end}
         total={store.maxTime}
         onChange={(value) => {
+          store.updateEditorElementCrop(element, {
+            fromEnd: element.timeFrame.end - value, // From end timeFrame Will be greater than crop value
+          });
           store.updateEditorElementTimeFrame(element, {
             end: value,
           });
