@@ -57,6 +57,7 @@ export type Placement = {
 export type TimeFrame = {
   start: number;
   end: number;
+  totalDurationInMs?: number;
 };
 
 export type Crop = {

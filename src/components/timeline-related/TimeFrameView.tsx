@@ -29,8 +29,18 @@ export const TimeFrameView = observer((props: { element: EditorElement }) => {
         total={store.maxTime}
         disabled={disabled}
         onChange={(value) => {
+          // Check if video can be extended in left
+          let changeInCrop = value - element.timeFrame.start;
+          const cropFromTheLeft = element.crop?.fromStart!;
+
+          if (changeInCrop < 0 && cropFromTheLeft === 0)
+            return; // If going left but video is already complete
+          else if (changeInCrop < 0 && cropFromTheLeft > 0) {
+            // If going left and there is some crop value
+            value = Math.max(value, element.timeFrame.start! - cropFromTheLeft);
+          }
           store.updateEditorElementCrop(element, {
-            fromStart: value - element.timeFrame.start, // From Start New Value will be greater than Current Time Frame Start
+            fromStart: changeInCrop, // From Start New Value will be greater than Current Time Frame Start
           });
           store.updateEditorElementTimeFrame(element, {
             start: value,
@@ -73,9 +83,20 @@ export const TimeFrameView = observer((props: { element: EditorElement }) => {
         value={element.timeFrame.end}
         total={store.maxTime}
         onChange={(value) => {
+          const elementTotalDurationInMsMinseCropped =
+            element.timeFrame.totalDurationInMs! - element.crop?.fromStart!;
+
+          if (
+            value - element.timeFrame.start >
+            elementTotalDurationInMsMinseCropped
+          )
+            value =
+              element.timeFrame.start + elementTotalDurationInMsMinseCropped;
+
           store.updateEditorElementCrop(element, {
             fromEnd: element.timeFrame.end - value, // From end timeFrame Will be greater than crop value
           });
+
           store.updateEditorElementTimeFrame(element, {
             end: value,
           });

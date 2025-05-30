@@ -581,6 +581,7 @@ export class Store {
       timeFrame: {
         start: 0,
         end: videoDurationMs,
+        totalDurationInMs: videoDurationMs,
       },
       crop: {
         fromStart: 0,
