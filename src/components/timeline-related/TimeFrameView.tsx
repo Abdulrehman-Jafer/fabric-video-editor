@@ -34,7 +34,10 @@ export const TimeFrameView = observer((props: { element: EditorElement }) => {
           const cropFromTheLeft = element.crop?.fromStart!;
 
           if (changeInCrop < 0 && cropFromTheLeft === 0)
-            return; // If going left but video is already complete
+            return {
+              stopDrag: true,
+            };
+          // If going left but video is already complete
           else if (changeInCrop < 0 && cropFromTheLeft > 0) {
             // If going left and there is some crop value
             value = Math.max(value, element.timeFrame.start! - cropFromTheLeft);
@@ -45,6 +48,10 @@ export const TimeFrameView = observer((props: { element: EditorElement }) => {
           store.updateEditorElementTimeFrame(element, {
             start: value,
           });
+
+          return {
+            stopDrag: false,
+          };
         }}
       >
         <div
@@ -65,14 +72,23 @@ export const TimeFrameView = observer((props: { element: EditorElement }) => {
         total={store.maxTime}
         onChange={(value) => {
           const { start, end } = element.timeFrame;
+          if (value < 0)
+            return {
+              stopDrag: true,
+            };
+
           store.updateEditorElementTimeFrame(element, {
             start: value,
             end: value + (end - start),
           });
+
+          return {
+            stopDrag: false,
+          };
         }}
       >
         <div
-          className={`${bgColorOnSelected} h-full w-full text-white text-xs min-w-[0px] px-2 leading-[25px]`}
+          className={`${bgColorOnSelected} h-full w-full text-white text-xs min-w-[0px] px-2 leading-[25px] select-none`}
         >
           {element.name}
         </div>
@@ -82,24 +98,27 @@ export const TimeFrameView = observer((props: { element: EditorElement }) => {
         disabled={disabled}
         value={element.timeFrame.end}
         total={store.maxTime}
-        onChange={(value) => {
-          const elementTotalDurationInMsMinseCropped =
+        onChange={(new_end) => {
+          const croppedTotalDuration =
             element.timeFrame.totalDurationInMs! - element.crop?.fromStart!;
 
-          if (
-            value - element.timeFrame.start >
-            elementTotalDurationInMsMinseCropped
-          )
-            value =
-              element.timeFrame.start + elementTotalDurationInMsMinseCropped;
+          const maxDurationOnTimeline =
+            element.timeFrame.start + croppedTotalDuration;
+
+          if (new_end - element.timeFrame.start > croppedTotalDuration)
+            new_end = maxDurationOnTimeline;
 
           store.updateEditorElementCrop(element, {
-            fromEnd: element.timeFrame.end - value, // From end timeFrame Will be greater than crop value
+            fromEnd: element.timeFrame.end - new_end, // From end timeFrame Will be greater than crop value
           });
 
           store.updateEditorElementTimeFrame(element, {
-            end: value,
+            end: new_end,
           });
+
+          return {
+            stopDrag: false,
+          };
         }}
       >
         <div

@@ -43,7 +43,7 @@ export const Editor = observer(() => {
 
     store.setCanvas(canvas);
     fabric.util.requestAnimFrame(function render() {
-      canvas.renderAll();
+      canvas?.renderAll();
       fabric.util.requestAnimFrame(render);
     });
   }, []);
