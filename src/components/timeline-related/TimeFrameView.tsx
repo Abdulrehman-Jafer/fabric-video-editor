@@ -19,7 +19,7 @@ export const TimeFrameView = observer((props: { element: EditorElement }) => {
         store.setSelectedElement(element);
       }}
       key={element.id}
-      className={`relative width-full h-[25px] my-2 ${
+      className={`relative width-full h-[50px] my-2 ${
         isSelected ? "border-2 border-indigo-600 bg-slate-200" : ""
       }`}
     >
@@ -66,7 +66,7 @@ export const TimeFrameView = observer((props: { element: EditorElement }) => {
           width: `${
             ((element.timeFrame.end - element.timeFrame.start) /
               store.maxTime) *
-            100
+            store.elementWidth
           }%`,
         }}
         total={store.maxTime}
@@ -88,7 +88,7 @@ export const TimeFrameView = observer((props: { element: EditorElement }) => {
         }}
       >
         <div
-          className={`${bgColorOnSelected} h-full w-full text-white text-xs min-w-[0px] px-2 leading-[25px] select-none`}
+          className={`${bgColorOnSelected} h-full w-full text-white text-center text-xs min-w-[0px] px-2 leading-[25px] select-none`}
         >
           {element.name}
         </div>

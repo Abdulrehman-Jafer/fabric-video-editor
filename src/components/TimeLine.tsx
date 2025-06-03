@@ -7,7 +7,9 @@ import { TimeFrameView } from "./timeline-related/TimeFrameView";
 
 export const TimeLine = observer(() => {
   const store = React.useContext(StoreContext);
-  const percentOfCurrentTime = (store.currentTimeInMs / store.maxTime) * 100;
+  const percentOfCurrentTime =
+    (store.currentTimeInMs / store.maxTime) * store.elementWidth;
+
   return (
     <div className="flex flex-col">
       <SeekPlayer />

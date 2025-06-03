@@ -47,6 +47,10 @@ export class Store {
   possibleVideoFormats: string[] = ["mp4", "webm"];
   selectedVideoFormat: "mp4" | "webm";
 
+  markings: { interval: number; color: string; size: number; width: number }[] =
+    [];
+  elementWidth: number = 100;
+
   constructor() {
     this.canvas = null;
     this.videos = [];
@@ -63,7 +67,43 @@ export class Store {
     this.animationTimeLine = anime.timeline();
     this.selectedMenuOption = "Video";
     this.selectedVideoFormat = "mp4";
+    this.markings = [
+      {
+        interval: 5000,
+        color: "black",
+        size: 16,
+        width: 1,
+      },
+      {
+        interval: 1000,
+        color: "black",
+        size: 8,
+        width: 1,
+      },
+    ];
+    this.elementWidth = 100;
+
     makeAutoObservable(this);
+  }
+
+  setMarkings(increase: boolean) {
+    if (increase) {
+      const newMarkings = this.markings.map((m) => ({
+        ...m,
+        interval: m.interval * 2,
+      }));
+
+      this.markings = newMarkings;
+      this.elementWidth = this.elementWidth * 2;
+    } else {
+      const newMarkings = this.markings.map((m) => ({
+        ...m,
+        interval: m.interval / 2,
+      }));
+      this.markings = newMarkings;
+
+      this.elementWidth = this.elementWidth / 2;
+    }
   }
 
   get currentTimeInMs() {
