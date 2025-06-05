@@ -52,13 +52,7 @@ export const SeekPlayer = observer((_props: SeekPlayerProps) => {
         </div>
       </section>
 
-      <ScaleRangeInput
-        onChange={(value) => {
-          store.handleSeek(value);
-        }}
-        height={30}
-        backgroundColor="white"
-      />
+      <ScaleRangeInput height={30} backgroundColor="white" />
     </div>
   );
 });

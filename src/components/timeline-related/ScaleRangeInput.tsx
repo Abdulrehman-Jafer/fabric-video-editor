@@ -3,7 +3,6 @@ import { StoreContext } from "@/store";
 import { useContext, useEffect, useRef, useState, useMemo } from "react";
 
 export type ScaleRangeInputProps = {
-  onChange: (value: number) => void;
   height: number;
   backgroundColor: string;
 };
@@ -18,12 +17,12 @@ export type ScaleRangeInputProps = {
  */
 
 export const ScaleRangeInput = ({
-  onChange,
   height,
   backgroundColor,
 }: ScaleRangeInputProps) => {
-  const { markings, currentTimeInMs, maxTime, zoomPercent } =
-    useContext(StoreContext);
+  const store = useContext(StoreContext);
+
+  const { markings, currentTimeInMs, maxTime, zoomPercent } = store;
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -104,7 +103,30 @@ export const ScaleRangeInput = ({
     const timeValue = (actualX / canvasWidth) * maxTime;
 
     const normalizedValue = Math.max(0, Math.min(maxTime, timeValue));
-    onChange(normalizedValue);
+    store.handleSeek(normalizedValue);
+  };
+
+  const onMouseClickToNewPosition = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!isMouseDownRef.current || !containerRef.current || canvasWidth <= 0)
+      return;
+
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+
+    const scrollLeft = containerRef.current.scrollLeft;
+    const actualX = x + scrollLeft;
+
+    const timeValue = (actualX / canvasWidth) * maxTime;
+
+    const zoomX = zoomPercent / 100;
+    const timeValueWithOutZoomX = timeValue / zoomX;
+
+    const normalizedValue = Math.max(
+      0,
+      Math.min(maxTime, timeValueWithOutZoomX)
+    );
+
+    store.handleSeek(normalizedValue);
   };
 
   const cursorPosition = useMemo(() => {
@@ -123,7 +145,11 @@ export const ScaleRangeInput = ({
       onMouseDown={() => {
         isMouseDownRef.current = true;
       }}
-      onMouseUp={() => {
+      onMouseUp={(e) => {
+        onMouseClickToNewPosition(e);
+        isMouseDownRef.current = false;
+      }}
+      onMouseLeave={() => {
         isMouseDownRef.current = false;
       }}
       onMouseMove={moveMouseToNewPosition}
