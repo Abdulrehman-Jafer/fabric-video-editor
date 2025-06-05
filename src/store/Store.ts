@@ -49,7 +49,7 @@ export class Store {
 
   markings: { interval: number; color: string; size: number; width: number }[] =
     [];
-  elementWidth: number = 100;
+  zoomPercent: number = 100;
 
   constructor() {
     this.canvas = null;
@@ -81,28 +81,28 @@ export class Store {
         width: 1,
       },
     ];
-    this.elementWidth = 100;
+    this.zoomPercent = 100;
 
     makeAutoObservable(this);
   }
 
   setMarkings(increase: boolean) {
     if (increase) {
-      const newMarkings = this.markings.map((m) => ({
-        ...m,
-        interval: m.interval * 2,
-      }));
+      // const newMarkings = this.markings.map((m) => ({
+      //   ...m,
+      //   interval: m.interval * 2,
+      // }));
 
-      this.markings = newMarkings;
-      this.elementWidth = this.elementWidth * 2;
+      // this.markings = newMarkings;
+      this.zoomPercent = this.zoomPercent * 2;
     } else {
-      const newMarkings = this.markings.map((m) => ({
-        ...m,
-        interval: m.interval / 2,
-      }));
-      this.markings = newMarkings;
+      // const newMarkings = this.markings.map((m) => ({
+      //   ...m,
+      //   interval: m.interval / 2,
+      // }));
+      // this.markings = newMarkings;
 
-      this.elementWidth = this.elementWidth / 2;
+      this.zoomPercent = this.zoomPercent / 2;
     }
   }
 
