@@ -90,23 +90,9 @@ export const ScaleRangeInput = ({
     });
   }, [markings, backgroundColor, maxTime, canvasWidth, height, zoomPercent]);
 
-  const moveMouseToNewPosition = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!isMouseDownRef.current || !containerRef.current || canvasWidth <= 0)
-      return;
-
-    const rect = containerRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-
-    const scrollLeft = containerRef.current.scrollLeft;
-    const actualX = x + scrollLeft;
-
-    const timeValue = (actualX / canvasWidth) * maxTime;
-
-    const normalizedValue = Math.max(0, Math.min(maxTime, timeValue));
-    store.handleSeek(normalizedValue);
-  };
-
-  const onMouseClickToNewPosition = (e: React.MouseEvent<HTMLDivElement>) => {
+  const onMouseClickOrMoveToNewPosition = (
+    e: React.MouseEvent<HTMLDivElement>
+  ) => {
     if (!isMouseDownRef.current || !containerRef.current || canvasWidth <= 0)
       return;
 
@@ -146,18 +132,23 @@ export const ScaleRangeInput = ({
         isMouseDownRef.current = true;
       }}
       onMouseUp={(e) => {
-        onMouseClickToNewPosition(e);
+        onMouseClickOrMoveToNewPosition(e);
         isMouseDownRef.current = false;
       }}
       onMouseLeave={() => {
         isMouseDownRef.current = false;
       }}
-      onMouseMove={moveMouseToNewPosition}
+      onMouseMove={onMouseClickOrMoveToNewPosition}
     >
-      <div style={{ width: `${canvasWidth}px`, height: `${height}px` }}>
+      <div
+        style={{
+          width: `${canvasWidth * (zoomPercent / 100)}px`,
+          height: `${height}px`,
+        }}
+      >
         <canvas
           ref={canvasRef}
-          className="absolute top-0 left-0"
+          className="absolute top-0 left-0 bg-white"
           style={{ display: "block" }}
         />
 
