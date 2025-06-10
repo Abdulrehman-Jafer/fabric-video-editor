@@ -18,7 +18,7 @@ export const EditorWithStore = () => {
       <Editor></Editor>
     </StoreContext.Provider>
   );
-}
+};
 
 export const Editor = observer(() => {
   const store = React.useContext(StoreContext);
@@ -43,20 +43,29 @@ export const Editor = observer(() => {
 
     store.setCanvas(canvas);
     fabric.util.requestAnimFrame(function render() {
-      canvas.renderAll();
-      fabric.util.requestAnimFrame(render);
+      try {
+        canvas.renderAll();
+        fabric.util.requestAnimFrame(render);
+      } catch (error) {
+        console.log(
+          error,
+          "Failed to render canvas canvas.renderAll: Editor.tsx"
+        );
+      }
     });
   }, []);
   return (
     <div className="grid grid-rows-[500px_1fr_20px] grid-cols-[72px_300px_1fr_250px] h-[100svh]">
-
       <div className="tile row-span-2 flex flex-col">
         <Menu />
       </div>
       <div className="row-span-2 flex flex-col overflow-scroll">
         <Resources />
       </div>
-      <div id="grid-canvas-container" className="col-start-3 bg-slate-100 flex justify-center items-center">
+      <div
+        id="grid-canvas-container"
+        className="col-start-3 bg-slate-100 flex justify-center items-center"
+      >
         <canvas id="canvas" className="h-[500px] w-[800px] row" />
       </div>
       <div className="col-start-4 row-start-1">
