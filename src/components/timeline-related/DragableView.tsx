@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useCallback } from "react";
 
 function DragableView(props: {
   children?: React.ReactNode;
@@ -13,58 +13,66 @@ function DragableView(props: {
     div: HTMLDivElement | null;
     isDragging: boolean;
     initialMouseX: number;
+    initialValue: number;
   }>({
     div: null,
     isDragging: false,
     initialMouseX: 0,
+    initialValue: 0,
   });
+
   const { current: data } = ref;
 
+  const handleMouseMove = useCallback(
+    (event: MouseEvent) => {
+      if (!data.div || !data.isDragging) return;
+
+      const deltaX = event.clientX - data.initialMouseX;
+      const deltaValue =
+        (deltaX / data.div.parentElement!.clientWidth) * props.total;
+      const newValue = data.initialValue + deltaValue;
+
+      const { stopDrag } = props.onChange(newValue);
+      if (stopDrag) {
+        data.isDragging = false;
+        return;
+      }
+
+      event.stopPropagation();
+      event.preventDefault();
+    },
+    [props.total, props.onChange]
+  );
+
+  const handleMouseUp = useCallback((event: MouseEvent) => {
+    if (!data.isDragging) return;
+
+    data.isDragging = false;
+    event.stopPropagation();
+    event.preventDefault();
+  }, []);
+
   useEffect(() => {
-    window.addEventListener("mouseup", handleMouseUp);
     window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+
     return () => {
-      window.removeEventListener("mouseup", handleMouseUp);
       window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [handleMouseUp, handleMouseMove]);
+  }, [handleMouseMove, handleMouseUp]);
 
   function handleMouseDown(
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) {
-    if (!data.div) return;
-    if (props.disabled) return;
+    if (!data.div || props.disabled) return;
+
     data.isDragging = true;
     data.initialMouseX = event.clientX;
-  }
+    data.initialValue = props.value; // Store the initial value when drag starts
 
-  function handleMouseMove(event: MouseEvent) {
-    if (!data.div) return;
-    if (!data.isDragging) return;
-    const newClientX = calculateNewValue(event.clientX);
-    const { stopDrag } = props.onChange(newClientX);
-    if (stopDrag) return;
-
-    data.div.style.left = `${(newClientX / props.total) * 100}%`;
     event.stopPropagation();
     event.preventDefault();
-  }
-
-  function handleMouseUp(event: MouseEvent) {
-    if (!data.div) return;
-    if (!data.isDragging) return;
-    data.isDragging = false;
-    props.onChange(calculateNewValue(event.clientX));
-    event.stopPropagation();
-    event.preventDefault();
-  }
-
-  function calculateNewValue(mouseX: number): number {
-    if (!data.div) return 0;
-    const deltaX = mouseX - data.initialMouseX;
-    const deltaValue =
-      (deltaX / data.div.parentElement!.clientWidth) * props.total;
-    return props.value + deltaValue;
   }
 
   return (

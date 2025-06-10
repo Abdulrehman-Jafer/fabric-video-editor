@@ -489,7 +489,7 @@ export class Store {
     }
 
     if (timeFrame.end != undefined && timeFrame.end > this.maxTime) {
-      this.setMaxTime(Math.max(this.maxTime, timeFrame.end));
+      // this.setMaxTime(Math.max(this.maxTime, timeFrame.end));
       timeFrame.end = this.maxTime;
     }
 
