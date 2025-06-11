@@ -138,7 +138,6 @@ export const TimeFrameView = observer(({ element }: { element: EditorElement }) 
                 value={element.timeFrame.end}
                 total={maxTime}
                 onChange={fromRight}
-                // isEndSide={true}
             >
                 <div
                     className={`bg-white border-2 border-blue-400 w-[10px] h-[10px] mt-[calc(25px/2)] translate-y-[-50%] transform translate-x-[-50%] ${disabledCursor}`}

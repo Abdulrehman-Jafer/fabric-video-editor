@@ -8,11 +8,8 @@ function DragableView(props: {
     style?: React.CSSProperties;
     value: number;
     total: number;
-    isEndSide?: boolean;
     onChange: (value: number) => { stopDrag: boolean };
 }) {
-    const store = React.useContext(StoreContext);
-
     const ref = useRef<{
         div: HTMLDivElement | null;
         isDragging: boolean;
@@ -83,7 +80,7 @@ function DragableView(props: {
             }}
             className={`absolute height-100 ${props.className}`}
             style={{
-                left: (props.value / props.total) * 100 * (props.isEndSide ? store.zoomPercent / 100 : 1) + '%',
+                left: (props.value / props.total) * 100 + '%',
                 top: 0,
                 bottom: 0,
                 ...props.style,
