@@ -14,7 +14,7 @@ export const TimeFrameView = observer(({ element }: { element: EditorElement }) 
         // intiial wdith percentage
         const widthPercentage = ((element.timeFrame.end - element.timeFrame.start) / maxTime) * 100;
 
-        return widthPercentage * (zoomPercent / 100);
+        return widthPercentage;
     }, [
         element.timeFrame.end,
         element.timeFrame.start,
@@ -101,7 +101,9 @@ export const TimeFrameView = observer(({ element }: { element: EditorElement }) 
                 store.setSelectedElement(element);
             }}
             key={element.id}
-            className={`relative h-[50px] w-auto my-2 ${isSelected ? 'border-2 border-indigo-600 bg-slate-200' : ''}`}
+            className={`relative h-[50px] w-[${100 * (zoomPercent / 100)}%] my-2 ${
+                isSelected ? 'border-2 border-indigo-600 bg-slate-200' : ''
+            }`}
         >
             <DragableView
                 className="z-10"
