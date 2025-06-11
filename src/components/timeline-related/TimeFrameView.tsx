@@ -12,16 +12,17 @@ export const TimeFrameView = observer(({ element }: { element: EditorElement }) 
 
     const mediaElementWidth = useMemo(() => {
         // intiial wdith percentage
-
         const widthPercentage = ((element.timeFrame.end - element.timeFrame.start) / maxTime) * 100;
 
-        return widthPercentage;
-    }, [element.timeFrame.end, element.timeFrame.start, element.crop?.fromStart, element.crop?.fromEnd, maxTime]);
-
-    const parentContainerWidth = useMemo(() => {
-        const zoomX = zoomPercent / 100;
-        return 100 * zoomX;
-    }, [zoomPercent]);
+        return widthPercentage * (zoomPercent / 100);
+    }, [
+        element.timeFrame.end,
+        element.timeFrame.start,
+        element.crop?.fromStart,
+        element.crop?.fromEnd,
+        maxTime,
+        zoomPercent,
+    ]);
 
     const disabled = element.type === 'audio';
     const isSelected = selectedElement?.id === element.id;
@@ -99,9 +100,7 @@ export const TimeFrameView = observer(({ element }: { element: EditorElement }) 
                 store.setSelectedElement(element);
             }}
             key={element.id}
-            className={`relative h-[50px] w-[${parentContainerWidth}%] my-2 ${
-                isSelected ? 'border-2 border-indigo-600 bg-slate-200' : ''
-            }`}
+            className={`relative h-[50px] w-auto my-2 ${isSelected ? 'border-2 border-indigo-600 bg-slate-200' : ''}`}
         >
             <DragableView
                 className="z-10"
