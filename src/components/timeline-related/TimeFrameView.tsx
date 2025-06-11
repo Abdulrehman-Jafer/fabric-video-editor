@@ -12,10 +12,8 @@ export const TimeFrameView = observer(({ element }: { element: EditorElement }) 
 
     const mediaElementWidth = useMemo(() => {
         // intiial wdith percentage
-        const deltaStart = element.timeFrame.start + (element.crop?.fromStart ?? 0);
-        const deltaEnd = element.timeFrame.end - (element.crop?.fromEnd ?? 0);
 
-        const widthPercentage = ((deltaEnd - deltaStart) / maxTime) * 100;
+        const widthPercentage = ((element.timeFrame.end - element.timeFrame.start) / maxTime) * 100;
 
         return widthPercentage;
     }, [element.timeFrame.end, element.timeFrame.start, element.crop?.fromStart, element.crop?.fromEnd, maxTime]);

@@ -442,6 +442,10 @@ export class Store {
     }
 
     updateEditorElementTimeFrame(editorElement: EditorElement, timeFrame: Partial<TimeFrame>) {
+        const newEditorElement = {
+            ...editorElement,
+        };
+
         if (timeFrame.start != undefined && timeFrame.start < 0) {
             timeFrame.start = 0;
         }
@@ -451,13 +455,9 @@ export class Store {
             timeFrame.end = this.maxTime;
         }
 
-        const newEditorElement = {
-            ...editorElement,
-            timeFrame: {
-                ...editorElement.timeFrame,
-                ...timeFrame,
-            },
-        };
+        if (timeFrame.start) newEditorElement.timeFrame.start = timeFrame.start;
+        if (timeFrame.end) newEditorElement.timeFrame.end = timeFrame.end;
+
         this.updateVideoElements();
         this.updateAudioElements();
         this.updateEditorElement(newEditorElement);
