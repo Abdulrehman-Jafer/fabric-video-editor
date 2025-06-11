@@ -77,6 +77,7 @@ export const TimeFrameView = observer(({ element }: { element: EditorElement }) 
 
     function handleVideoDrag(new_start: number) {
         const { start, end } = element.timeFrame;
+        store.setPlaying(false);
         if (new_start < 0)
             return {
                 stopDrag: true,

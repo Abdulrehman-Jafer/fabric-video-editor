@@ -44,6 +44,7 @@ export class Store {
 
     markings: { interval: number; color: string; size: number; width: number }[] = [];
     zoomPercent: number = 100;
+    updateTimeFrameTimeout: NodeJS.Timeout | null = null;
 
     constructor() {
         this.canvas = null;
@@ -442,26 +443,34 @@ export class Store {
     }
 
     updateEditorElementTimeFrame(editorElement: EditorElement, timeFrame: Partial<TimeFrame>) {
-        const newEditorElement = {
-            ...editorElement,
-        };
-
-        if (timeFrame.start != undefined && timeFrame.start < 0) {
-            timeFrame.start = 0;
+        if (this.updateTimeFrameTimeout) {
+            clearTimeout(this.updateTimeFrameTimeout);
         }
 
-        if (timeFrame.end != undefined && timeFrame.end > this.maxTime) {
-            // this.setMaxTime(Math.max(this.maxTime, timeFrame.end));
-            timeFrame.end = this.maxTime;
-        }
+        this.updateTimeFrameTimeout = setTimeout(() => {
+            const newEditorElement = {
+                ...editorElement,
+            };
 
-        if (timeFrame.start) newEditorElement.timeFrame.start = timeFrame.start;
-        if (timeFrame.end) newEditorElement.timeFrame.end = timeFrame.end;
+            if (timeFrame.start != undefined && timeFrame.start < 0) {
+                timeFrame.start = 0;
+            }
 
-        this.updateVideoElements();
-        this.updateAudioElements();
-        this.updateEditorElement(newEditorElement);
-        this.refreshAnimations();
+            if (timeFrame.end != undefined && timeFrame.end > this.maxTime) {
+                // this.setMaxTime(Math.max(this.maxTime, timeFrame.end));
+                timeFrame.end = this.maxTime;
+            }
+
+            if (timeFrame.start) newEditorElement.timeFrame.start = timeFrame.start;
+            if (timeFrame.end) newEditorElement.timeFrame.end = timeFrame.end;
+
+            this.updateVideoElements();
+            this.updateAudioElements();
+            this.updateEditorElement(newEditorElement);
+            this.refreshAnimations();
+
+            this.updateTimeFrameTimeout = null;
+        }, 16);
     }
 
     addEditorElement(editorElement: EditorElement) {
@@ -1032,6 +1041,7 @@ export class Store {
 export function isEditorAudioElement(element: EditorElement): element is AudioEditorElement {
     return element.type === 'audio';
 }
+
 export function isEditorVideoElement(element: EditorElement): element is VideoEditorElement {
     return element.type === 'video';
 }
